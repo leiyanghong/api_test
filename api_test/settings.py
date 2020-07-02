@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'guoya_api',
     'django_filters',
+    'rest_framework.authtoken',
 
 ]
 

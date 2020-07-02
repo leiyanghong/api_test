@@ -25,7 +25,6 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name')
@@ -35,6 +34,7 @@ class ProjectDeserializer(serializers.ModelSerializer):
     """
     项目信息反序列化
     """
+
     class Meta:
         model = Project
         fields = ('id', 'name', 'version', 'type', 'status', 'LastUpdateTime', 'createTime', 'description')
@@ -50,10 +50,9 @@ class ProjectSerializer(serializers.ModelSerializer):
     LastUpdateTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
     createTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
 
-
     class Meta:
         model = Project
-        fields = ('id', 'name', 'version', 'type', 'status', 'LastUpdateTime', 'createTime','description')
+        fields = ('id', 'name', 'version', 'type', 'status', 'LastUpdateTime', 'createTime', 'description')
 
     # def get_apiCount(self, obj):
     #     return obj.api_project.all().count()
@@ -69,9 +68,10 @@ class ProjectDynamicDeserializer(serializers.ModelSerializer):
     """
     项目动态信息反序列化
     """
+
     class Meta:
         model = ProjectDynamic
-        fields = ('id', 'project', 'time', 'type', 'operationObject',  'description')
+        fields = ('id', 'project', 'time', 'type', 'operationObject', 'description')
 
 
 class ProjectDynamicSerializer(serializers.ModelSerializer):
@@ -90,6 +90,7 @@ class ProjectMemberDeserializer(serializers.ModelSerializer):
     """
     项目成员信息反序列化
     """
+
     class Meta:
         model = ProjectMember
         fields = ('id', 'permissionType', 'project')
@@ -122,6 +123,7 @@ class ApiGroupLevelFirstSerializer(serializers.ModelSerializer):
     """
     接口一级分组信息序列化
     """
+
     class Meta:
         model = ApiGroupLevelFirst
         fields = ('id', 'project_id', 'name')
@@ -131,6 +133,7 @@ class ApiGroupLevelFirstDeserializer(serializers.ModelSerializer):
     """
     接口一级分组信息反序列化
     """
+
     class Meta:
         model = ApiGroupLevelFirst
         fields = ('id', 'project_id', 'name')
@@ -140,6 +143,7 @@ class ApiHeadSerializer(serializers.ModelSerializer):
     """
     接口请求头序列化
     """
+
     class Meta:
         model = ApiHead
         fields = ('id', 'api', 'name', 'value')
@@ -237,6 +241,7 @@ class ApiInfoDeserializer(serializers.ModelSerializer):
     """
     接口详细信息序列化
     """
+
     class Meta:
         model = ApiInfo
         fields = ('id', 'project_id', 'name', 'httpType',
@@ -282,6 +287,7 @@ class APIRequestHistoryDeserializer(serializers.ModelSerializer):
     """
     接口请求历史信息反序列化
     """
+
     class Meta:
         model = APIRequestHistory
         fields = ('id', 'api_id', 'requestTime', 'requestType', 'requestAddress', 'httpCode')
@@ -313,6 +319,7 @@ class AutomationGroupLevelFirstSerializer(serializers.ModelSerializer):
     """
     自动化用例一级分组信息序列化
     """
+
     class Meta:
         model = AutomationGroupLevelFirst
         fields = ('id', 'project_id', 'name')
@@ -335,6 +342,7 @@ class AutomationTestCaseDeserializer(serializers.ModelSerializer):
     """
     自动化用例信息反序列化
     """
+
     class Meta:
         model = AutomationTestCase
         fields = ('id', 'project_id', 'automationGroupLevelFirst', 'caseName',
@@ -345,6 +353,7 @@ class AutomationHeadSerializer(serializers.ModelSerializer):
     """
     自动化用例接口请求头信息序列化
     """
+
     class Meta:
         model = AutomationHead
         fields = ('id', 'automationCaseApi', 'name', 'value', 'interrelate')
@@ -354,6 +363,7 @@ class AutomationHeadDeserializer(serializers.ModelSerializer):
     """
     自动化用例接口请求头信息反序列化
     """
+
     class Meta:
         model = AutomationHead
         fields = ('id', 'automationCaseApi_id', 'name', 'value', 'interrelate')
@@ -363,6 +373,7 @@ class AutomationParameterSerializer(serializers.ModelSerializer):
     """
     自动化用例接口请求参数信息序列化
     """
+
     class Meta:
         model = AutomationParameter
         fields = ('id', 'automationCaseApi', 'name', 'value', 'interrelate')
@@ -372,6 +383,7 @@ class AutomationParameterDeserializer(serializers.ModelSerializer):
     """
     自动化用例接口请求参数信息反序列化
     """
+
     class Meta:
         model = AutomationParameter
         fields = ('id', 'automationCaseApi_id', 'name', 'value', 'interrelate')
@@ -381,6 +393,7 @@ class AutomationParameterRawSerializer(serializers.ModelSerializer):
     """
     接口请求参数源数据序列化
     """
+
     class Meta:
         model = AutomationParameterRaw
         fields = ('id', 'automationCaseApi', 'data')
@@ -390,6 +403,7 @@ class AutomationParameterRawDeserializer(serializers.ModelSerializer):
     """
     接口请求参数源数据反序列化
     """
+
     class Meta:
         model = AutomationParameterRaw
         fields = ('id', 'automationCaseApi_id', 'data')
@@ -476,16 +490,19 @@ class AutomationCaseApiDeserializer(serializers.ModelSerializer):
     """
     自动化用例接口详细信息反序列化
     """
+
     class Meta:
         model = AutomationCaseApi
-        fields = ('id', 'automationTestCase_id', 'name', 'httpType', 'requestType', 'apiAddress', 'requestParameterType',
-                  'formatRaw', 'examineType', 'httpCode', 'responseData')
+        fields = (
+        'id', 'automationTestCase_id', 'name', 'httpType', 'requestType', 'apiAddress', 'requestParameterType',
+        'formatRaw', 'examineType', 'httpCode', 'responseData')
 
 
 class AutomationCaseApiListSerializer(serializers.ModelSerializer):
     """
     自动化用例接口列表信息序列化
     """
+
     class Meta:
         model = AutomationCaseApi
         fields = ('id', 'name', 'requestType', 'apiAddress')
@@ -577,6 +594,7 @@ class AutomationTestLatelyTenTimeSerializer(serializers.ModelSerializer):
     """
     最近10次测试结果
     """
+
     class Meta:
         model = AutomationTaskRunTime
         fields = ("id", "startTime")
@@ -601,3 +619,9 @@ class AutomationReportSendConfigDeserializer(serializers.ModelSerializer):
     class Meta:
         model = AutomationReportSendConfig
         fields = ("id", "project_id", 'reportFrom', 'mailUser', 'mailPass', 'mailSmtp')
+
+
+class TestResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AutomationTestResult
+        fields = "__all__"

@@ -1,12 +1,15 @@
 import django_filters
 from rest_framework import generics
 from rest_framework.response import Response
+
+from guoya_api.common.automation_case import run_api
 from . import serializers
 from . import models
 from .filters import ProjectFilter
 from rest_framework import filters
 from . import pagination
 from rest_framework import mixins
+from rest_framework import views
 
 
 class Projects(generics.GenericAPIView):
@@ -78,8 +81,6 @@ class Project(generics.GenericAPIView):
         return Response(serializer.data)
 
 
-
-
 class Project1(generics.GenericAPIView, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDeserializer
@@ -115,3 +116,60 @@ class Project1(generics.GenericAPIView, mixins.UpdateModelMixin, mixins.DestroyM
         '''
         return self.destroy(request, *args, **kwargs)
 
+
+class TestCases(views.APIView):
+    def post(self, request):
+        data = request.data  # APIView中对httprequest进行二次封装，提供了request.data和request.query_params常用属性
+        headers = data.pop('headDict')  # 取出并删除data中headDict字段的数据
+        raw_data = data.pop("requestList")  # 因为requestList不存进数据库表中,所以满足条件就去除requestList的值
+        project_id = data.pop("project_id")
+        regularParam = data.pop("RegularParam")
+        '''
+        1.外键关联序列化的时候需要先获取外键对象
+        2.调用save方法的时候把对象传过去
+        '''
+        # 获取外键对象
+        obj = models.AutomationTestCase.objects.get(id=data.pop("automationTestCase_id"))
+        # 把接口详细信息存入automationcaseapi表中
+        serializer = serializers.AutomationCaseApiDeserializer(data=data)  # 构建序列化对象 实例用instance 非实例用data
+        serializer.is_valid(raise_exception=True)  # 验证数据是否有效
+        test_case = serializer.save(automationTestCase=obj)  # 写入更新至数据库表中
+        for i in headers:
+            if i["name"] == "":
+                continue
+            serializer = serializers.AutomationHeadDeserializer(data=i)
+            serializer.is_valid(raise_exception=True)  # 验证数据是否有效
+            serializer.save(automationCaseApi=test_case)  # 写入更新至数据库表中
+        if data["requestParameterType"] == "raw":  # 判断requestParameterType的值是否为"raw"
+            # 将requestList字段的字符串数据转换成字典数据,并把生成的case_api_id跟guoya_api_automationparameterraw的id做关联
+            raw = {"data":raw_data}
+            # 反序列化操作提交到api_test_automationparameterraw这张表中
+            serializer = serializers.AutomationParameterRawDeserializer(data=raw)
+            serializer.is_valid(raise_exception=True)  # 验证数据是否有效
+            serializer.save(automationCaseApi=test_case)  # 写入更新至数据库表中
+        elif(data["requestParameterType"] == "form-data"):
+            for i in raw_data:
+                serializer = serializers.AutomationParameterDeserializer(data=i)
+                serializer.is_valid(raise_exception=True)
+                serializer.save(automationCaseApi=test_case)
+        return Response("ok")
+
+
+class ExcuteCase(views.APIView):
+    def post(self,request):
+        # 获取请求数据
+        data = request.data
+        # 获取执行的接口id
+        api_id = data["api_id"]
+        # 获取使用主机id
+        host_id = data["host_id"]
+        # 校验接口数据是否存在,是否有缺失
+        # 获取接口请求之后的响应数据
+        run_api(api_id=api_id,host_id=host_id)
+        # 根据id获取指定的查询集
+        case_api = models.AutomationCaseApi.objects.filter(id=api_id).first()
+        # 根据查询集的关联名字获取关联表指定的数据,取最后一条数据
+        res = case_api.test_result.all().last()
+        # 将获取的数据序列化
+        serializer = serializers.AutomationTestResultSerializer(instance=res)
+        return Response(serializer.data)

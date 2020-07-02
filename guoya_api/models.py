@@ -405,6 +405,7 @@ class AutomationCaseApi(models.Model):
     用例执行接口
     """
     id = models.AutoField(primary_key=True)
+    # 定义了一个外键约束对象,在做反序列化操作的时候,要先查出id的值,再把对象加到data中
     automationTestCase = models.ForeignKey(AutomationTestCase, on_delete=models.CASCADE,
                                            verbose_name='用例', related_name="api")
     name = models.CharField(max_length=50, verbose_name='接口名称')
@@ -504,7 +505,7 @@ class AutomationTestResult(models.Model):
     手动执行结果
     """
     id = models.AutoField(primary_key=True)
-    automationCaseApi = models.OneToOneField(AutomationCaseApi, on_delete=models.CASCADE, verbose_name='接口'
+    automationCaseApi = models.ForeignKey(AutomationCaseApi, on_delete=models.CASCADE, verbose_name='接口'
                                              , related_name="test_result")
     url = models.CharField(max_length=1024, verbose_name='请求地址')
     requestType = models.CharField(max_length=1024, verbose_name='请求方式', choices=REQUEST_TYPE_CHOICE)

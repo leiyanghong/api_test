@@ -22,4 +22,6 @@ urlpatterns = [
     re_path(r'projects/',views.Projects.as_view()),  # 使用as_view()方法把类视图注册为视图
     re_path(r'project/', views.Project.as_view()),  # 使用as_view()方法把类视图注册为视图
     re_path(r"^project1/(?P<pk>[\d]+).?$", views.Project1.as_view()),
+    re_path(r'cases/?',views.TestCases.as_view()),
+    re_path(r'run/?',views.ExcuteCase.as_view()),
 ]
